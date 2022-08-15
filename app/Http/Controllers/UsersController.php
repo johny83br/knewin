@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
+use App\Models\User;
 use Illuminate\Http\Request;
 
-class NewsController extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -25,16 +25,16 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        News::createWithElasticsearch($request->all());
+        //
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\News  $news
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(News $news)
+    public function show(User $user)
     {
         //
     }
@@ -43,10 +43,10 @@ class NewsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\News  $news
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news)
+    public function update(Request $request, User $user)
     {
         //
     }
@@ -54,10 +54,10 @@ class NewsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\News  $news
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(News $news)
+    public function destroy(User $user)
     {
         //
     }
