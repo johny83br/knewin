@@ -4,9 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\News;
 use Illuminate\Http\Request;
+use App\Repositories\NewsRepository;
 
 class NewsController extends Controller
 {
+
+    /** @var NewsRepository $newsRepository*/
+    private $newsRepository;
+
+    public function __construct(NewsRepository $newsRepository)
+    {
+        $this->newsRepository = $newsRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +24,7 @@ class NewsController extends Controller
      */
     public function index()
     {
-        //
+        return $this->newsRepository->getAllWithElasticsearch();
     }
 
     /**
@@ -25,18 +35,17 @@ class NewsController extends Controller
      */
     public function store(Request $request)
     {
-        News::createWithElasticsearch($request->all());
+        $this->newsRepository->create($request->all());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function show(News $news)
+    public function show($id)
     {
-        //
+        return $this->newsRepository->getWithElasticsearch($id);
     }
 
     /**
@@ -46,9 +55,9 @@ class NewsController extends Controller
      * @param  \App\Models\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news)
+    public function update(Request $request, $id = null)
     {
-        //
+        return $this->newsRepository->updateWithElasticsearch($id, $request->all());
     }
 
     /**
@@ -57,8 +66,8 @@ class NewsController extends Controller
      * @param  \App\Models\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function destroy(News $news)
+    public function destroy($id = null)
     {
-        //
+        return $this->newsRepository->deleteWithElasticsearch($id);
     }
 }
