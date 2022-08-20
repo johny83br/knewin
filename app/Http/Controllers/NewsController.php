@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\News;
 use Illuminate\Http\Request;
 use App\Repositories\NewsRepository;
 
@@ -41,6 +40,7 @@ class NewsController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -52,10 +52,10 @@ class NewsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\News  $news
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id = null)
+    public function update(Request $request, $id)
     {
         return $this->newsRepository->updateWithElasticsearch($id, $request->all());
     }
@@ -63,7 +63,7 @@ class NewsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\News  $news
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id = null)

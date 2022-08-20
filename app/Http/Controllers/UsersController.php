@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Repositories\UsersRepository;
 
 class UsersController extends Controller
 {
+
+    /** @var UsersRepository $usersRepository*/
+    private $usersRepository;
+
+    public function __construct(UsersRepository $usersRepository)
+    {
+        $this->usersRepository = $usersRepository;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +23,7 @@ class UsersController extends Controller
      */
     public function index()
     {
-        //
+        return $this->usersRepository->all();
     }
 
     /**
@@ -25,40 +34,40 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $this->usersRepository->create($request->all());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($id)
     {
-        //
+        return $this->usersRepository->find($id);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
-        //
+        return $this->usersRepository->update($request->all(), $id);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        //
+        return $this->usersRepository->delete($id);
     }
 }

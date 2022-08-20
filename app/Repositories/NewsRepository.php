@@ -19,6 +19,10 @@ class NewsRepository extends BaseRepository
      */
     protected $fieldSearchable = ['title', 'url', 'source', 'content', 'created_at'];
 
+    /**
+     * @var ClientBuilder $clientElasticsearch
+     */
+
     private $clientElasticsearch = null;
 
     public function __construct()
@@ -44,13 +48,19 @@ class NewsRepository extends BaseRepository
         return News::class;
     }
 
-    public function create($data = null)
+    /**
+     * Store a newly created resource in database and Elasticsearch.
+     *
+     * @param  array $input
+     */
+
+    public function create($input = null)
     {
 
-        $news = News::create($data);
+        $news = News::create($input);
 
         $data_elastic = [
-            'body' => $data,
+            'body' => $input,
             'index' => 'news',
             'id' => $news->id
         ];
@@ -58,29 +68,51 @@ class NewsRepository extends BaseRepository
         $this->clientElasticsearch->index($data_elastic);
     }
 
-    public function getWithElasticsearch($id = null)
+    /**
+     * Display the specified resource of the Elasticsearch.
+     *
+     * @param int $id
+     * @return json $input
+     */
+
+    public function getWithElasticsearch($id)
     {
 
-        $data = $this->clientElasticsearch->get(['index' => 'news', 'id' => $id]);
+        $input = $this->clientElasticsearch->get(['index' => 'news', 'id' => $id]);
 
-        return $data;
+        return $input;
     }
 
-    public function updateWithElasticsearch($id, $data = null)
+    /**
+     * Update the specified resource in storage and in the Elasticsearch.
+     *
+     * @param int $id
+     * @param array $input
+     * @return boolean
+     */
+
+    public function updateWithElasticsearch($id, $input = null)
     {
 
         $data_elastic = [
-            'body' => $data,
+            'body' => $input,
             'index' => 'news',
             'id' => $id
         ];
 
         $this->clientElasticsearch->index($data_elastic);
 
-        return News::find($id)->updateOrFail($data);
+        return News::find($id)->updateOrFail($input);
     }
 
-    public function deleteWithElasticsearch($id = null)
+    /**
+     * Remove the specified resource from storage and in the Elasticsearch.
+     *
+     * @param int $id
+     * @return boolean
+     */
+
+    public function deleteWithElasticsearch($id)
     {
 
         $data_elastic = [
@@ -93,7 +125,13 @@ class NewsRepository extends BaseRepository
         return News::destroy($id);
     }
 
-    public function getAllWithElasticsearch($search = null)
+    /**
+     * Display a listing of the resource (Elasticsearch).
+     *
+     * @return json
+     */
+
+    public function getAllWithElasticsearch()
     {
 
 
