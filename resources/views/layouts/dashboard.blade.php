@@ -30,16 +30,15 @@
             <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
                 <div class="col">
                     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-                        <span class="fs-4">Knewin</span>
+                        <span class="fs-4">Hello, {{ Auth::user()->name }}!</span>
                     </a>
                 </div>
                 <div class="col">
                     <ul class="nav nav-pills float-end">
-                        <li class="nav-item"><a href="{{ route('news') }}" class="nav-link active" aria-current="page">News</a></li>
                         <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <a href="#" class="nav-link" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
+                                <a href="#" class="btn btn-outline-primary" onclick="event.preventDefault(); this.closest('form').submit();">Logout</a>
                             </form>
                         </li>
                     </ul>

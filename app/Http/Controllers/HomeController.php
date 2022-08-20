@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class HomeController extends Controller
 {
@@ -21,8 +22,15 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->post()) {
+
+            if (!empty($request->post('query'))) {
+            } else {
+                return back()->with('error', 'Please, write the syntax!');
+            }
+        }
         return view('dashboard.home');
     }
 
