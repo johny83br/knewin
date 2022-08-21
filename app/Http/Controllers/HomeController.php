@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\NewsRepository;
+use Exception;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
@@ -37,13 +39,30 @@ class HomeController extends Controller
 
         if (!empty($request->get('query'))) {
 
-            $perPage = $request->get('limit', 10);
-            $from = ($request->get('page', 1) - 1) * $perPage;
-
-            $newsRepository = $this->newsRepository->getAllWithElasticsearch($request->post('query'), $perPage, $from);
-
-            $news = $this->paginate($newsRepository, $perPage);
             $query = $request->post('query');
+
+            try {
+                $perPage = $request->get('limit', 10);
+                $from = ($request->get('page', 1) - 1) * $perPage;
+
+                $newsRepository = $this->newsRepository->getAllWithElasticsearch($request->post('query'), $perPage, $from);
+
+                if ($newsRepository['hits']['total']['value'] == 0) {
+                    Session::flash('message', 'Not found news ');
+                    Session::flash('alert-class', 'alert-info');
+                } else {
+                    $news = $this->paginate($newsRepository, $perPage);
+                }
+            } catch (Exception $ex) {
+                $e = json_decode($ex->getMessage());
+                $causes = $e->error->root_cause;
+                $reasons = [];
+                foreach ($causes as $val) {
+                    $reasons[] = $val->reason;
+                }
+                Session::flash('message', implode('<br/>', $reasons));
+                Session::flash('alert-class', 'alert-danger');
+            }
         }
 
         return view('dashboard.home')->with('query', $query)->with('news', $news);

@@ -5,10 +5,8 @@
 <div class="col-12 mb-5">
     <h1 class="display-3">News</h1>
     <p>Write below syntaxes of the query string of the Elasticsearch to search for news:</p>
-    @if(session()->has('error'))
-    <div class="alert alert-danger">
-        {{ session()->get('error') }}
-    </div>
+    @if(Session::has('message'))
+    <div class="alert {{ Session::get('alert-class') }}">{{ Session::get('message') }}</div>
     @endif
     <form action="{{ route('post-news') }}" method="GET">
         <div class="input-group">
