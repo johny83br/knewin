@@ -23,10 +23,10 @@
 </head>
 
 <body>
-    <div id="app">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-4">
+    <div id="app" class="h-100">
+        <div class="container h-100">
+            <div class="row justify-content-center h-100">
+                <div class="col-md-4 my-auto">
                     <div class="card mt-3">
                         <div class="card-header">Login</div>
 

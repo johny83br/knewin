@@ -10903,3 +10903,7 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+body,
+html {
+  height: 100%;
+}
