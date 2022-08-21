@@ -59,6 +59,12 @@ class NewsRepository extends BaseRepository
 
         $news = News::create($input);
 
+        if (!empty($input['created_at'])) {
+            list($date, $hour) = explode(' ', $input['created_at']);
+            list($a, $m, $d) = explode('-', $date);
+            $input['created_at'] = $a . '/' . $m . '/' . $d . ' ' . $hour;
+        }
+
         $data_elastic = [
             'body' => $input,
             'index' => 'news',
@@ -93,6 +99,13 @@ class NewsRepository extends BaseRepository
 
     public function updateWithElasticsearch($id, $input = null)
     {
+        $register = News::find($id)->updateOrFail($input);
+
+        if (!empty($input['created_at'])) {
+            list($date, $hour) = explode(' ', $input['created_at']);
+            list($a, $m, $d) = explode('-', $date);
+            $input['created_at'] = $a . '/' . $m . '/' . $d . ' ' . $hour;
+        }
 
         $data_elastic = [
             'body' => $input,
@@ -102,7 +115,7 @@ class NewsRepository extends BaseRepository
 
         $this->clientElasticsearch->index($data_elastic);
 
-        return News::find($id)->updateOrFail($input);
+        return $register;
     }
 
     /**
@@ -128,16 +141,38 @@ class NewsRepository extends BaseRepository
     /**
      * Display a listing of the resource (Elasticsearch).
      *
+     * @param string $query_string
+     * @param int $per_page
+     * @param int $from
      * @return json
      */
 
-    public function getAllWithElasticsearch()
+    public function getAllWithElasticsearch($query_string = "", $per_page = null, $from = null)
     {
 
 
         $data_elastic = [
             'index' => 'news'
         ];
+
+        if (!empty($query_string)) {
+            $data_elastic = array_merge($data_elastic, [
+                'size' => $per_page,
+                'from' => $from,
+                'body' => [
+                    'query' => [
+                        'query_string' => [
+                            'query' => $query_string
+                        ]
+                    ],
+                    'sort' => [
+                        'created_at' => [
+                            'order' => 'desc'
+                        ]
+                    ],
+                ]
+            ]);
+        }
 
         return $this->clientElasticsearch->search($data_elastic);
     }
