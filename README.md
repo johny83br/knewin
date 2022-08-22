@@ -38,7 +38,7 @@ As pastas que estão disponibilizadas no repositório são:
 
 - **/docker-compose:**
 
-  Nesta pasta estarão disponibilizados todos os arquivos que foram necessários para a criação dos containers do Docker, utilizando o docker.yml.
+  Nesta pasta estarão disponibilizados todos os arquivos que foram necessários para a criação dos containers do Docker, utilizando o docker-compose.yml.
 
 ## Documentação da API
 
