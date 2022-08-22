@@ -2,30 +2,33 @@ version: "3.9"
 services:
   elasticsearch:
     image: elasticsearch:8.2.2
+    container_name: elasticsearch
     environment:
+      - cluster.name=knewin-cluster
+      - node.name=knewin
       - discovery.type=single-node
       - ES_JAVA_OPTS=-Xms1g -Xmx1g
       - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
-    ports:
-      - target: 9200
-        published: 9200
     networks:
-      - elastic
+      - laravel
 
   kibana:
     image: kibana:8.2.2
     ports:
-      - target: 5601
-        published: 5601
-    depends_on:
-      - elasticsearch
+      - "5601:5601"
     networks:
-      - elastic
-  postgresql:
+      - laravel
+  database:
     image: postgres
-    restart: always
+    container_name: database
+    restart: unless-stopped
+    build:
+      context: ./docker-compose/db
+      dockerfile: Dockerfile
     environment:
       POSTGRES_USER: "postgres"
       POSTGRES_DB: "postgres"
@@ -34,18 +37,45 @@ services:
       APP_DB_PASS: "docker"
       APP_DB_NAME: "knewin"
     ports:
-      - "15432:5432"
+      - "5432:5432"
     volumes:
-      - ./docker-compose/db/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./docker-compose/db/postgres-data:/var/lib/postgresql/data
     networks:
-      - postgresql
+      - laravel
+  app:
+    build:
+      args:
+        user: knewin
+        uid: 1000
+      context: .
+      dockerfile: ./docker-compose/php/Dockerfile
+    image: laravel
+    container_name: laravel-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./app/:/var/www
+    depends_on:
+      - elasticsearch
+    networks:
+      - laravel
+  nginx:
+    image: nginx:alpine
+    container_name: nginx-app
+    restart: unless-stopped
+    ports:
+      - 8000:80
+    volumes:
+      - ./app:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    depends_on:
+      - elasticsearch
+    networks:
+      - laravel
+
 volumes:
   es_data:
     driver: local
-
 networks:
-  elastic:
-    name: elastic
-    driver: bridge
-  postgresql:
+  laravel:
     driver: bridge

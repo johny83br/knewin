@@ -27,7 +27,7 @@ class NewsRepository extends BaseRepository
 
     public function __construct()
     {
-        $this->clientElasticsearch = ClientBuilder::create()->build();
+        $this->clientElasticsearch = ClientBuilder::create()->setHosts(['elasticsearch'])->build();
     }
 
     /**
