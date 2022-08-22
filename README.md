@@ -57,3 +57,4 @@ Para este projeto foram utilizadas as seguintes tecnologias:
 - Kibana 8.2.2
 - PostgreSQL 14.5
 - NGINX 1.23.1
+- Docker 22.06.0
